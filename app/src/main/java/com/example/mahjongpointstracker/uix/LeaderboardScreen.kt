@@ -12,7 +12,9 @@ import com.example.mahjongpointstracker.model.Player
 
 @Composable
 fun LeaderboardScreen() {
+  //winnerId only has 1 slot for winner (change data type if more winners req.)
   var winnerId by remember { mutableStateOf<Int?>(null) }
+
   var players by remember {
     mutableStateOf(
       listOf(
@@ -43,6 +45,8 @@ fun LeaderboardScreen() {
             rank = index + 1,
             player = player,
             isWinner = player.id == winnerId,
+
+            //overwrite old check if new one is selected, clears winnerId if unselected
             onWinnerChange =  { checked ->
               winnerId = if (checked) player.id else null
             }

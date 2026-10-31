@@ -11,33 +11,35 @@ import com.example.mahjongpointstracker.model.Player
 
 @Composable
 fun LeaderboardRow(
-    rank: Int,
-    player: Player,
-    onAddPoints: (Int) -> Unit
+  rank: Int,
+  player: Player,
+  isWinner: Boolean,
+  onWinnerChange: (Boolean) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "$rank",
-            modifier = Modifier.width(32.dp),
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = player.name,
-            modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.bodyLarge
-        )
-        Text(
-            text = "${player.points}",
-            modifier = Modifier.padding(end = 8.dp),
-            fontWeight = FontWeight.Bold
-        )
-        OutlinedButton(onClick = { onAddPoints(-10) }) { Text("-10") }
-        Spacer(Modifier.width(4.dp))
-        Button(onClick = { onAddPoints(10) }) { Text("+10") }
-    }
+  Row(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(vertical = 8.dp),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    Checkbox(
+      checked = isWinner,
+      onCheckedChange = onWinnerChange
+    )
+    Text(
+      text = "$rank",
+      modifier = Modifier.width(32.dp),
+      fontWeight = FontWeight.Bold
+    )
+    Text(
+      text = player.name,
+      modifier = Modifier.weight(1f),
+      style = MaterialTheme.typography.bodyLarge
+    )
+    Text(
+      text = "${player.points}",
+      modifier = Modifier.padding(end = 8.dp),
+      fontWeight = FontWeight.Bold
+    )
+  }
 }

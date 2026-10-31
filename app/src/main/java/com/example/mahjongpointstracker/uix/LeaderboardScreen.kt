@@ -15,6 +15,9 @@ fun LeaderboardScreen() {
   //winnerId only has 1 slot for winner (change data type if more winners req.)
   var winnerId by remember { mutableStateOf<Int?>(null) }
 
+  //edit player name
+  var editingPlayer by remember { mutableStateOf<Player?>(null) }
+
   var players by remember {
     mutableStateOf(
       listOf(
@@ -49,7 +52,8 @@ fun LeaderboardScreen() {
             //overwrite old check if new one is selected, clears winnerId if unselected
             onWinnerChange =  { checked ->
               winnerId = if (checked) player.id else null
-            }
+            },
+            onNameClick = { editingPlayer = player }
           )
           HorizontalDivider()
         }
@@ -84,5 +88,41 @@ fun LeaderboardScreen() {
         Text("Winner +30")
       }
     }
+  }
+
+  //popup to change player name
+  editingPlayer?.let { player ->
+    var newName by remember(player.id) { mutableStateOf(player.name) }
+
+    AlertDialog(
+      onDismissRequest = { editingPlayer = null },
+      title = { Text("Change name") },
+      text = {
+        OutlinedTextField(
+          value = newName,
+          onValueChange = { newName = it },
+          singleLine = true,
+          label = { Text("Name") }
+        )
+      },
+      confirmButton = {
+        TextButton(
+          enabled = newName.isNotBlank(),
+          onClick = {
+            players = players.map {
+              if (it.id == player.id) it.copy(name = newName.trim()) else it
+            }
+            editingPlayer = null
+          }
+        ) {
+          Text("Save")
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { editingPlayer = null }) {
+          Text("Cancel")
+        }
+      }
+    )
   }
 }

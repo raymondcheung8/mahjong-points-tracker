@@ -50,7 +50,7 @@ fun LeaderboardScreen() {
             isWinner = player.id == winnerId,
 
             //overwrite old check if new one is selected, clears winnerId if unselected
-            onWinnerChange =  { checked ->
+            onWinnerChange = { checked ->
               winnerId = if (checked) player.id else null
             },
             onNameClick = { editingPlayer = player }

@@ -37,16 +37,18 @@ fun LeaderboardScreen() {
                 items = players.sortedByDescending { it.points },
                 key = { _, player -> player.id }
             ) { index, player ->
-                LeaderboardRow(
-                    rank = index + 1,
-                    player = player,
-                    onAddPoints = { amount ->
-                        players = players.map {
-                            if (it.id == player.id) it.copy(points = it.points + amount) else it
+                Column(modifier = Modifier.animateItem()) {
+                    LeaderboardRow(
+                        rank = index + 1,
+                        player = player,
+                        onAddPoints = { amount ->
+                            players = players.map {
+                                if (it.id == player.id) it.copy(points = it.points + amount) else it
+                            }
                         }
-                    }
-                )
-                HorizontalDivider()
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }

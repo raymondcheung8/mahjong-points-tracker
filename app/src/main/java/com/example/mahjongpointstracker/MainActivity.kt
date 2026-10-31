@@ -30,20 +30,20 @@ import com.example.mahjongpointstracker.ui.theme.MahjongPointsTrackerTheme
 import com.example.mahjongpointstracker.uix.LeaderboardScreen
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 80.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
-                LeaderboardScreen()
-            }
-        }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    enableEdgeToEdge()
+    setContent {
+      Column(
+        modifier = Modifier
+          .fillMaxSize()
+          .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 80.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+      )
+      {
+        LeaderboardScreen()
+      }
     }
+  }
 }
 

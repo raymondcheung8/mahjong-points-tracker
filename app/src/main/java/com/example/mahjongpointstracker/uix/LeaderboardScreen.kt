@@ -7,11 +7,27 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.mahjongpointstracker.model.Player
+import com.example.mahjongpointstracker.model.Utils
+import java.io.File
 
 @Composable
 fun LeaderboardScreen() {
+  // TODO move to form screen instead of leaderboard screen
+  val historyFile = File(LocalContext.current.filesDir, "example.csv")
+
+  val retryLimit = 5
+  if (!Utils.createNewFileWithRetries(historyFile, retryLimit)) {
+    throw Exception("Cannot create new file: ${historyFile.name} after $retryLimit attempts")
+  }
+  // TODO read the existing scores from csv
+  // TODO create a new function in Utils to read csv
+//  val bufferedReader: BufferedReader = history.bufferedReader()
+//  val inputString = bufferedReader.use { it.readText() }
+//  println(inputString)
+
   //winnerId only has 1 slot for winner (change data type if more winners req.)
   var winnerId by remember { mutableStateOf<Int?>(null) }
 
@@ -21,10 +37,10 @@ fun LeaderboardScreen() {
   var players by remember {
     mutableStateOf(
       listOf(
-        Player(1, "Alice", 120),
-        Player(2, "Bob", 85),
-        Player(3, "Chen", 240),
-        Player(4, "Dana", 60)
+        Player(1, "Player1", 0),
+        Player(2, "Player2", 0),
+        Player(3, "Player3", 0),
+        Player(4, "Player4", 0)
       )
     )
   }
@@ -79,6 +95,7 @@ fun LeaderboardScreen() {
         modifier = Modifier.weight(1f),
         enabled = winnerId != null,
         onClick = {
+          // TODO update csv file
           players = players.map {
             if (it.id == winnerId) it.copy(points = it.points + 30) else it
           }

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.mahjongpointstracker.ui.theme.MahjongPointsTrackerTheme
+import com.example.mahjongpointstracker.uix.LeaderboardScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
             MahjongPointsTrackerTheme {
                 MyScreen()
             }
+            LeaderboardScreen()
         }
     }
 }

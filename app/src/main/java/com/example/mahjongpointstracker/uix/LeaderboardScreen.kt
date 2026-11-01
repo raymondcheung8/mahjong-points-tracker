@@ -217,9 +217,25 @@ fun LeaderboardScreen() {
           enabled = points != null && winType != null && (winType != WinType.SIKWU || discarderId != null),
           onClick = {
             players = players.map {
-              //TODO minus points from other players to pay winner
+              //minus points from non-winners, extra penalty if dealt in
+              //all penalty if self draw
               //convert faan to points before adding to final score
-              if (it.id == winnerId) it.copy(points = it.points + Utils.faanToPoints(points!!)) else it
+              when (winType) {
+                WinType.SIKWU -> {
+                  when (it.id) {
+                    discarderId -> it.copy(points = it.points - 2 * Utils.faanToPoints(points!!))
+                    winnerId -> it.copy(points = it.points + 4 * Utils.faanToPoints(points!!))
+                    else -> it.copy(points = it.points - Utils.faanToPoints(points!!))
+                  }
+                }
+                WinType.ZIMO -> {
+                  when (it.id) {
+                    winnerId -> it.copy(points = it.points + 6 * Utils.faanToPoints(points!!))
+                    else -> it.copy(points = it.points - 2 * Utils.faanToPoints(points!!))
+                  }
+                }
+                else -> it
+              }
             }
             winnerId = null
             showWinnerDialog = false

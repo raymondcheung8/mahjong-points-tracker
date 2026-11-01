@@ -1,5 +1,6 @@
 package com.example.mahjongpointstracker.uix
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -13,6 +14,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.mahjongpointstracker.model.Player
 import com.example.mahjongpointstracker.model.Utils
+import com.example.mahjongpointstracker.model.WinType
 import java.io.File
 
 @Composable
@@ -37,14 +39,16 @@ fun LeaderboardScreen() {
   var editingPlayer by remember { mutableStateOf<Player?>(null) }
 
   var showWinnerDialog by remember { mutableStateOf(false) }
+  var winType by remember { mutableStateOf<WinType?>(null) }
+  var discarderId by remember { mutableStateOf<Int?>(null) }
 
   var players by remember {
     mutableStateOf(
       listOf(
-        Player(1, "Player1", 0),
-        Player(2, "Player2", 0),
-        Player(3, "Player3", 0),
-        Player(4, "Player4", 0)
+        Player(1, "Player1", 300),
+        Player(2, "Player2", 300),
+        Player(3, "Player3", 300),
+        Player(4, "Player4", 300)
       )
     )
   }
@@ -84,6 +88,7 @@ fun LeaderboardScreen() {
     Spacer(Modifier.height(12.dp))
 
     // Button panel
+    //TODO add zimo and sikwu checkboxes maybe in winner popup
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -92,8 +97,8 @@ fun LeaderboardScreen() {
         modifier = Modifier.weight(1f),
         onClick = {
           winnerId = null
-          //set all player scores to 0
-          players = players.map { it.copy(points = 0) }
+          //set all player points to 300
+          players = players.map { it.copy(points = 300) }
         }
       ) {
         Text("Reset")
@@ -157,19 +162,62 @@ fun LeaderboardScreen() {
       onDismissRequest = { showWinnerDialog = false },
       title = { Text("Faan (番) for ${winner?.name ?: "winner"}") },
       text = {
-        OutlinedTextField(
-          value = pointsText,
-          onValueChange = { input -> pointsText = input.filter { it.isDigit() } },
-          singleLine = true,
-          label = { Text("Faan (番)") },
-          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
+        Column {
+          Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+              checked = winType == WinType.ZIMO,
+              onCheckedChange = { checked ->
+                winType = if (checked) WinType.ZIMO else null
+                discarderId = null
+              }
+            )
+            Text("Self draw (自莫)")
+            Spacer(Modifier.width(16.dp))
+            Checkbox(
+              checked = winType == WinType.SIKWU,
+              onCheckedChange = { checked ->
+                winType = if (checked) WinType.SIKWU else null
+                discarderId = null
+              }
+            )
+            Text("Discard win (食糊)")
+          }
+
+          if (winType == WinType.SIKWU) {
+            Spacer(Modifier.height(8.dp))
+            Text("Who dealt in?", style = MaterialTheme.typography.labelLarge)
+            players.filter { it.id != winnerId }.forEach { p ->
+              Row(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .clickable { discarderId = p.id },
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                RadioButton(
+                  selected = discarderId == p.id,
+                  onClick = { discarderId = p.id }
+                )
+                Text(p.name)
+              }
+            }
+          }
+
+          Spacer(Modifier.height(8.dp))
+          OutlinedTextField(
+            value = pointsText,
+            onValueChange = { input -> pointsText = input.filter { it.isDigit() } },
+            singleLine = true,
+            label = { Text("Faan (番)") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+          )
+        }
       },
       confirmButton = {
         TextButton(
-          enabled = points != null,
+          enabled = points != null && winType != null && (winType != WinType.SIKWU || discarderId != null),
           onClick = {
             players = players.map {
+              //TODO minus points from other players to pay winner
               //convert faan to points before adding to final score
               if (it.id == winnerId) it.copy(points = it.points + Utils.faanToPoints(points!!)) else it
             }

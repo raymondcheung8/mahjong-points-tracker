@@ -87,10 +87,13 @@ fun LeaderboardScreen() {
     ) {
       OutlinedButton(
         modifier = Modifier.weight(1f),
-        enabled = false,
-        onClick = { winnerId = null }
+        onClick = {
+          winnerId = null
+          //set all player scores to 0
+          players = players.map { it.copy(points = 0) }
+        }
       ) {
-        Text("Clear")
+        Text("Reset")
       }
       Button(
         modifier = Modifier.weight(1f),

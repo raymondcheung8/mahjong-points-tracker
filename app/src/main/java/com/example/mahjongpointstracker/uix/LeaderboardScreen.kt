@@ -80,6 +80,7 @@ fun LeaderboardScreen() {
     Spacer(Modifier.height(12.dp))
 
     // Button panel
+    //TODO reset score button
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -96,10 +97,13 @@ fun LeaderboardScreen() {
         enabled = winnerId != null,
         onClick = {
           // TODO update csv file
+          // TODO let user set faan
           players = players.map {
             if (it.id == winnerId) it.copy(points = it.points + 30) else it
           }
           winnerId = null
+
+          Utils.faanToPoints(10)
         }
       ) {
         Text("Winner +30")

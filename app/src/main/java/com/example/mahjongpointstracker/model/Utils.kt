@@ -21,4 +21,12 @@ object Utils {
     return retryCount != limit &&
         (checkFileExistsElseCreate(file) || createNewFileWithRetries(file, limit, retryCount + 1))
   }
+
+  fun faanToPoints(faan: Int): Int {
+    if (faan <= 4.0) return 1 shl faan
+
+    val m = faan - 4
+    val base = if (m % 2 == 0) 2 else 3
+    return base * (1 shl (3 + m / 2))
+  }
 }

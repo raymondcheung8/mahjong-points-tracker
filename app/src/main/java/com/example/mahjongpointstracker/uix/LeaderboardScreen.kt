@@ -3,11 +3,13 @@ package com.example.mahjongpointstracker.uix
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.mahjongpointstracker.model.Player
 import com.example.mahjongpointstracker.model.Utils
@@ -33,6 +35,8 @@ fun LeaderboardScreen() {
 
   //edit player name
   var editingPlayer by remember { mutableStateOf<Player?>(null) }
+
+  var showWinnerDialog by remember { mutableStateOf(false) }
 
   var players by remember {
     mutableStateOf(
@@ -80,7 +84,6 @@ fun LeaderboardScreen() {
     Spacer(Modifier.height(12.dp))
 
     // Button panel
-    //TODO reset score button
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -100,16 +103,10 @@ fun LeaderboardScreen() {
         enabled = winnerId != null,
         onClick = {
           // TODO update csv file
-          // TODO let user set faan
-          players = players.map {
-            if (it.id == winnerId) it.copy(points = it.points + 30) else it
-          }
-          winnerId = null
-
-          Utils.faanToPoints(10)
+            showWinnerDialog = true
         }
       ) {
-        Text("Winner +30")
+        Text("Winner")
       }
     }
   }
@@ -144,6 +141,47 @@ fun LeaderboardScreen() {
       },
       dismissButton = {
         TextButton(onClick = { editingPlayer = null }) {
+          Text("Cancel")
+        }
+      }
+    )
+  }
+
+  //popup to input faan into leaderboard
+  if (showWinnerDialog) {
+    val winner = players.find { it.id == winnerId }
+    var pointsText by remember { mutableStateOf("") }
+    val points = pointsText.toIntOrNull()
+
+    AlertDialog(
+      onDismissRequest = { showWinnerDialog = false },
+      title = { Text("Faan (番) for ${winner?.name ?: "winner"}") },
+      text = {
+        OutlinedTextField(
+          value = pointsText,
+          onValueChange = { input -> pointsText = input.filter { it.isDigit() } },
+          singleLine = true,
+          label = { Text("Faan (番)") },
+          keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+        )
+      },
+      confirmButton = {
+        TextButton(
+          enabled = points != null,
+          onClick = {
+            players = players.map {
+              //convert faan to points before adding to final score
+              if (it.id == winnerId) it.copy(points = it.points + Utils.faanToPoints(points!!)) else it
+            }
+            winnerId = null
+            showWinnerDialog = false
+          }
+        ) {
+          Text("Confirm")
+        }
+      },
+      dismissButton = {
+        TextButton(onClick = { showWinnerDialog = false }) {
           Text("Cancel")
         }
       }

@@ -22,6 +22,24 @@ object Utils {
         (checkFileExistsElseCreate(file) || createNewFileWithRetries(file, limit, retryCount + 1))
   }
 
+  fun readCsv(file: File): Result<List<List<String>>> = runCatching {
+    file.bufferedReader().use { reader ->
+      reader.lineSequence()
+        .filter { it.isNotBlank() }
+        .map { it.split(",") }
+        .toList()
+    }
+  }
+
+  fun writeCsv(file: File, rows: List<List<String>>): Result<Unit> = runCatching {
+    file.bufferedWriter().use { writer ->
+      rows.forEach { row ->
+        writer.write(row.joinToString(","))
+        writer.newLine()
+      }
+    }
+  }
+
   //2^k until 4 faan, then alternates between 2*2^k and 3*2^k
   fun faanToPoints(faan: Int): Int {
     if (faan <= 4) return 1 shl faan

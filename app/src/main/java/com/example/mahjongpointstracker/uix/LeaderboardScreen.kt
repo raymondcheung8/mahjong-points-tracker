@@ -28,9 +28,6 @@ fun LeaderboardScreen() {
   }
   // TODO read the existing scores from csv
   // TODO create a new function in Utils to read csv
-//  val bufferedReader: BufferedReader = history.bufferedReader()
-//  val inputString = bufferedReader.use { it.readText() }
-//  println(inputString)
 
   //winnerId only has 1 slot for winner (change data type if more winners req.)
   var winnerId by remember { mutableStateOf<Int?>(null) }

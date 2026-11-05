@@ -23,7 +23,11 @@ fun LeaderboardScreen() {
   val historyFile = File(LocalContext.current.filesDir, "example.csv")
 
   val retryLimit = 5
-  Utils.createNewFileWithRetries(historyFile, retryLimit).getOrThrow()
+  val isNewFileCreated = Utils.createNewFileWithRetries(historyFile, retryLimit).getOrThrow()
+
+  if (!isNewFileCreated) {
+    TODO()
+  }
 
   // TODO read the existing scores from csv
   // TODO create a new function in Utils to read csv
@@ -116,7 +120,7 @@ fun LeaderboardScreen() {
         enabled = winnerId != null,
         onClick = {
           // TODO update csv file
-            showWinnerDialog = true
+          showWinnerDialog = true
         }
       ) {
         Text("Winner")
@@ -236,12 +240,14 @@ fun LeaderboardScreen() {
                     else -> it.copy(points = it.points - Utils.faanToPoints(points!!))
                   }
                 }
+
                 WinType.ZIMO -> {
                   when (it.id) {
                     winnerId -> it.copy(points = it.points + 6 * Utils.faanToPoints(points!!))
                     else -> it.copy(points = it.points - 2 * Utils.faanToPoints(points!!))
                   }
                 }
+
                 else -> it
               }
             }

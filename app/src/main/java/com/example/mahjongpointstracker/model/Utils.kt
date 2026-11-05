@@ -7,18 +7,20 @@ import java.io.IOException
 object Utils {
   private const val LOG_TAG = "Utils"
 
-  fun createNewFile(file: File): Result<Unit> =
+  /** @return true if file is created, false if file already existed, an error otherwise
+   */
+  fun createNewFile(file: File): Result<Boolean> =
     runCatching { file.createNewFile() }
       .onSuccess { created -> if (created) Log.i(LOG_TAG, "Created new file: $file") }
       .onFailure { Log.w(LOG_TAG, "Failed to create file: $file", it) }
-      .map { }
 
-  fun createNewFileWithRetries(file: File, limit: Int): Result<Unit> {
-    return generateSequence { createNewFile(file) }
+  /** @return true if file is created, false if file already existed, an error otherwise
+   */
+  fun createNewFileWithRetries(file: File, limit: Int): Result<Boolean> =
+    generateSequence { createNewFile(file) }
       .take(limit)
       .firstOrNull { it.isSuccess }
       ?: Result.failure(IOException("Could not create file: $file after $limit attempts"))
-  }
 
   fun readCsv(file: File): Result<List<List<String>>> = runCatching {
     file.bufferedReader().use { reader ->

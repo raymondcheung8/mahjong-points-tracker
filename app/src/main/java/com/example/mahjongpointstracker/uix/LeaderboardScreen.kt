@@ -22,11 +22,12 @@ fun LeaderboardScreen() {
   // TODO move to form screen instead of leaderboard screen
   val historyFile = File(LocalContext.current.filesDir, "example.csv")
 
-  val retryLimit = 5
-  val isNewFileCreated = Utils.createNewFileWithRetries(historyFile, retryLimit).getOrThrow()
+  val isNewFileCreated = Utils.withRetries(5) { Utils.createNewFile(historyFile) }.getOrThrow()
 
-  if (!isNewFileCreated) {
-    TODO()
+  if (isNewFileCreated) {
+    // TODO Everyone gets default points
+  } else {
+    // TODO load everyone's score from the csv
   }
 
   // TODO read the existing scores from csv

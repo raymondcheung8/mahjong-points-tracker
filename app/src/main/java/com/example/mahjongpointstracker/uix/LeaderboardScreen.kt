@@ -23,9 +23,8 @@ fun LeaderboardScreen() {
   val historyFile = File(LocalContext.current.filesDir, "example.csv")
 
   val retryLimit = 5
-  if (!Utils.createNewFileWithRetries(historyFile, retryLimit)) {
-    throw Exception("Cannot create new file: ${historyFile.name} after $retryLimit attempts")
-  }
+  Utils.createNewFileWithRetries(historyFile, retryLimit).getOrThrow()
+
   // TODO read the existing scores from csv
   // TODO create a new function in Utils to read csv
 

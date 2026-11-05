@@ -2,24 +2,22 @@ package com.example.mahjongpointstracker.model
 
 import android.util.Log
 import java.io.File
+import java.io.IOException
 
 object Utils {
   private const val LOG_TAG = "Utils"
 
-  fun createNewFile(file: File): Boolean {
-    val isCreated = file.createNewFile()
-    if (isCreated) Log.i(LOG_TAG, "Created new file: $file")
-    return isCreated
-  }
+  fun createNewFile(file: File): Result<Unit> =
+    runCatching { file.createNewFile() }
+      .onSuccess { created -> if (created) Log.i(LOG_TAG, "Created new file: $file") }
+      .onFailure { Log.w(LOG_TAG, "Failed to create file: $file", it) }
+      .map { }
 
-  fun checkFileExistsElseCreate(file: File): Boolean {
-    return file.exists() || createNewFile(file)
-  }
-
-  fun createNewFileWithRetries(file: File, limit: Int, retryCount: Int = 0): Boolean {
-    if (retryCount == limit) Log.w(LOG_TAG, "Could not create new file after $limit tries")
-    return retryCount != limit &&
-        (checkFileExistsElseCreate(file) || createNewFileWithRetries(file, limit, retryCount + 1))
+  fun createNewFileWithRetries(file: File, limit: Int): Result<Unit> {
+    return generateSequence { createNewFile(file) }
+      .take(limit)
+      .firstOrNull { it.isSuccess }
+      ?: Result.failure(IOException("Could not create file: $file after $limit attempts"))
   }
 
   fun readCsv(file: File): Result<List<List<String>>> = runCatching {

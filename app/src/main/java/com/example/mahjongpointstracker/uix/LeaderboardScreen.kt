@@ -20,15 +20,8 @@ import java.io.File
 @Composable
 fun LeaderboardScreen() {
   // TODO move to form screen instead of leaderboard screen
-  val historyFile = File(LocalContext.current.filesDir, "example.csv")
-
-  val isNewFileCreated = Utils.withRetries(5) { Utils.createNewFile(historyFile) }.getOrThrow()
-
-  if (isNewFileCreated) {
-    // TODO Everyone gets default points
-  } else {
-    // TODO load everyone's score from the csv
-  }
+  val dataFile = File(LocalContext.current.filesDir, "data.csv")
+  val playerData = Utils.loadPlayerData(dataFile).getOrThrow()
 
   // TODO read the existing scores from csv
   // TODO create a new function in Utils to read csv
@@ -44,14 +37,7 @@ fun LeaderboardScreen() {
   var discarderId by remember { mutableStateOf<Int?>(null) }
 
   var players by remember {
-    mutableStateOf(
-      listOf(
-        Player(1, "Player1", 300),
-        Player(2, "Player2", 300),
-        Player(3, "Player3", 300),
-        Player(4, "Player4", 300)
-      )
-    )
+    mutableStateOf(playerData)
   }
 
   Column(

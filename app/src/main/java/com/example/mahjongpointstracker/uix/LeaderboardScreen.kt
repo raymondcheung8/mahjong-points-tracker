@@ -86,6 +86,16 @@ fun LeaderboardScreen() {
 
     HorizontalDivider()
     Spacer(Modifier.height(12.dp))
+    //Declare constants/values
+    var handText by remember { mutableStateOf("") }
+
+    //Textbox for writing out hands. Just copying Faan code to see how it works
+    OutlinedTextField(
+      value = handText,
+      onValueChange = { input -> handText = input.filter { it.isLetterOrDigit() } },
+      singleLine = true,
+      label = { Text("Hand") }
+    )
 
     // Button panel
     //TODO add zimo and sikwu checkboxes maybe in winner popup
@@ -210,6 +220,8 @@ fun LeaderboardScreen() {
             label = { Text("Faan (番)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
           )
+
+
         }
       },
       confirmButton = {

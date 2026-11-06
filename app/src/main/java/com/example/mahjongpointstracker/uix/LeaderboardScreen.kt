@@ -97,6 +97,8 @@ fun LeaderboardScreen() {
       label = { Text("Hand") }
     )
 
+    Spacer(Modifier.height(12.dp))
+
     // Button panel
     //TODO add zimo and sikwu checkboxes maybe in winner popup
     Row(

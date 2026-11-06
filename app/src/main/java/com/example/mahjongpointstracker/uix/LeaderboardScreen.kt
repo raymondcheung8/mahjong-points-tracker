@@ -222,8 +222,6 @@ fun LeaderboardScreen() {
             label = { Text("Faan (番)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
           )
-
-
         }
       },
       confirmButton = {

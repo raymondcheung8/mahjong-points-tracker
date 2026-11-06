@@ -19,7 +19,7 @@ import java.io.File
 
 @Composable
 fun LeaderboardScreen() {
-  // TODO move to form screen instead of leaderboard screen
+  // TODO move to form screen instead of leaderboard screen so that it doesn't read csv on every reload
   val dataFile = File(LocalContext.current.filesDir, "data.csv")
   val playerData = Utils.loadPlayerData(dataFile).getOrThrow()
 
@@ -97,7 +97,8 @@ fun LeaderboardScreen() {
         onClick = {
           winnerId = null
           //set all player points to 300
-          players = players.map { it.copy(points = 300) }
+          players = players.map { it.getPlayerWithPointsReset() }
+          Utils.writeDataRows(dataFile, players.map { it.toDataRow() })
         }
       ) {
         Text("Reset")
@@ -106,7 +107,6 @@ fun LeaderboardScreen() {
         modifier = Modifier.weight(1f),
         enabled = winnerId != null,
         onClick = {
-          // TODO update csv file
           showWinnerDialog = true
         }
       ) {
@@ -238,6 +238,7 @@ fun LeaderboardScreen() {
                 else -> it
               }
             }
+            Utils.writeDataRows(dataFile, players.map { it.toDataRow() })
             winnerId = null
             showWinnerDialog = false
           }

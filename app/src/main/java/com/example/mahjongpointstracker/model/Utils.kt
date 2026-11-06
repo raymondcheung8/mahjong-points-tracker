@@ -74,6 +74,12 @@ object Utils {
     }
   }
 
+  /** Prepend the header to the dataRows and write to csv
+   */
+  fun writeDataRows(file: File, rows: List<DataRow>): Result<Unit> {
+    return writeCsv(file, listOf(DataRow.getHeader()) + rows.map { it.toStringList() })
+  }
+
   //2^k until 4 faan, then alternates between 2*2^k and 3*2^k
   fun faanToPoints(faan: Int): Int {
     if (faan <= 4) return 1 shl faan

@@ -55,4 +55,5 @@ dependencies {
   implementation(platform(libs.arrow.stack))
   implementation(libs.arrow.core)
   coreLibraryDesugaring(libs.desugar.jdk.libs)
+  implementation(libs.androidx.lifecycle.viewmodel.compose)
 }

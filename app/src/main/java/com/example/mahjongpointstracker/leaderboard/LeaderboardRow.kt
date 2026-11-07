@@ -1,4 +1,4 @@
-package com.example.mahjongpointstracker.uix
+package com.example.mahjongpointstracker.leaderboard
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

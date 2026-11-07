@@ -15,6 +15,7 @@ fun LeaderboardRow(
   rank: Int,
   player: Player,
   isWinner: Boolean,
+  isDealer: Boolean,
   onWinnerChange: (Boolean) -> Unit,
   onNameClick: () -> Unit
 ) {
@@ -34,11 +35,12 @@ fun LeaderboardRow(
       fontWeight = FontWeight.Bold
     )
     Text(
-      text = player.name,
+      text = if (isDealer) player.name + "(東)" else player.name,
       modifier = Modifier
         .weight(1f)
         .clickable { onNameClick() },
-      style = MaterialTheme.typography.bodyLarge
+      style = MaterialTheme.typography.bodyLarge,
+      fontWeight = if (isDealer) FontWeight.Bold else FontWeight.Normal
     )
     Text(
       text = "${player.points}",

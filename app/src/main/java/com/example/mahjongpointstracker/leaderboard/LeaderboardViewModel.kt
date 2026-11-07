@@ -1,5 +1,6 @@
 package com.example.mahjongpointstracker.leaderboard
 
+import android.R
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -11,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -47,25 +49,25 @@ class LeaderboardViewModel(application: Application) : AndroidViewModel(applicat
     save(updated)
   }
 
-  fun recordWin(winnerId: Int, winType: WinType, discarderId: Int?, faan: Int) {
+  fun owed(p: Player, winType: WinType, dealerWon: Boolean, dealerId: Int, discarderId: Int?, unit: Int): Int {
+    val base = when (winType) {
+      WinType.SIKWU -> if (p.id == discarderId) 2 else 1
+      WinType.ZIMO -> 2
+      WinType.DRAW -> 0
+    }
+    val multiplier = if (dealerWon || p.id == dealerId) 2 else 1
+    return base * unit * multiplier
+  }
+
+  fun recordWin(winnerId: Int, winType: WinType, discarderId: Int?, dealerId: Int, faan: Int) {
     val unit = Utils.faanToPoints(faan)
+    val total = _players.value
+      .filter { it.id != winnerId }
+      .sumOf { owed(it, winType, winnerId == dealerId, dealerId, discarderId, unit) }
 
     val updated = _players.value.map {
-      when (winType) {
-        // minus points from non-winners, extra penalty if dealt in
-        // all penalty if self draw
-        // convert faan to points before adding to final score
-        WinType.SIKWU -> when (it.id) {
-          discarderId -> it.copy(points = it.points - 2 * unit)
-          winnerId -> it.copy(points = it.points + 4 * unit)
-          else -> it.copy(points = it.points - unit)
-        }
-
-        WinType.ZIMO -> when (it.id) {
-          winnerId -> it.copy(points = it.points + 6 * unit)
-          else -> it.copy(points = it.points - 2 * unit)
-        }
-      }
+      if (it.id == winnerId) it.copy(points = it.points + total)
+      else it.copy(points = it.points - owed(it, winType, winnerId == dealerId, dealerId, discarderId, unit))
     }
 
     _players.value = updated

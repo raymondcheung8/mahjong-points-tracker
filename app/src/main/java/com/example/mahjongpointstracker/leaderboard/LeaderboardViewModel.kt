@@ -53,6 +53,7 @@ class LeaderboardViewModel(application: Application) : AndroidViewModel(applicat
     val base = when (winType) {
       WinType.SIKWU -> if (p.id == discarderId) 2 else 1
       WinType.ZIMO -> 2
+      WinType.DRAW -> 0
     }
     val multiplier = if (dealerWon || p.id == dealerId) 2 else 1
     return base * unit * multiplier

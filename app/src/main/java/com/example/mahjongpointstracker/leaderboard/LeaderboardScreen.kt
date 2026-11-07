@@ -1,5 +1,6 @@
 package com.example.mahjongpointstracker.leaderboard
 
+import android.R
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +24,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
 
   var dealerId by remember { mutableIntStateOf(1) }
   var round by remember { mutableIntStateOf(0) }
+  var dealerTenpai by remember { mutableStateOf(false) }
 
   //edit player name
   var editingPlayer by remember { mutableStateOf<Player?>(null) }
@@ -87,12 +89,15 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
       }
       Button(
         modifier = Modifier.weight(1f),
-        enabled = winnerId != null,
         onClick = {
+          winType = null
+          discarderId = null
+          faan = 3
+          dealerTenpai = false
           showWinnerDialog = true
         }
       ) {
-        Text("Winner")
+        Text("Round End")
       }
     }
   }
@@ -137,27 +142,40 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
 
     AlertDialog(
       onDismissRequest = { showWinnerDialog = false },
-      title = { Text("Faan (番) for ${winner?.name ?: "winner"}") },
+      title = { Text("Round Outcome") },
       text = {
         Column {
           Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(
               checked = winType == WinType.ZIMO,
+              enabled = winnerId != null,
               onCheckedChange = { checked ->
                 winType = if (checked) WinType.ZIMO else null
                 discarderId = null
               }
             )
-            Text("Self draw (自莫)")
-            Spacer(Modifier.width(16.dp))
+            Text("Self\ndraw\n(自莫)")
+            Spacer(Modifier.width(4.dp))
             Checkbox(
               checked = winType == WinType.SIKWU,
+              enabled = winnerId != null,
               onCheckedChange = { checked ->
                 winType = if (checked) WinType.SIKWU else null
                 discarderId = null
               }
             )
-            Text("Discard win (食糊)")
+            Text("Discard\nwin\n(食糊)")
+
+            Spacer(Modifier.width(4.dp))
+            Checkbox(
+              checked = winType == WinType.DRAW,
+              enabled = winnerId == null,
+              onCheckedChange = { checked ->
+                winType = if (checked) WinType.DRAW else null
+                discarderId = null
+              }
+            )
+            Text("Draw")
           }
 
           if (winType == WinType.SIKWU) {
@@ -177,11 +195,37 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
                 Text(p.name)
               }
             }
-          }
+          } else if (winType == WinType.DRAW) {
+          Spacer(Modifier.height(8.dp))
+          Text("Dealer hand?", style = MaterialTheme.typography.labelLarge)
+            Column(modifier = Modifier.fillMaxWidth()) {
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                RadioButton(
+                  selected = dealerTenpai,
+                  onClick = { dealerTenpai = true }
+                )
+                Text("Tenpai")
+              }
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+              ) {
+                RadioButton(
+                  selected = !dealerTenpai,
+                  onClick = { dealerTenpai = false }
+                )
+                Text("Not Tenpai")
+              }
+            }
+        }
 
           Spacer(Modifier.height(8.dp))
           Text("Faan (番): $faan", style = MaterialTheme.typography.labelLarge)
           Slider(
+            enabled = winnerId != null,
             value = faan.toFloat(),
             onValueChange = { faan = it.roundToInt() },
             valueRange = 0f..10f,
@@ -214,7 +258,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
               viewModel.recordWin(winner, type, discarderId, dealerId, faan)
             }
 
-            if (winnerId != dealerId) round++
+            if (winnerId != dealerId && !dealerTenpai) round++
             winnerId = null
             showWinnerDialog = false
           }

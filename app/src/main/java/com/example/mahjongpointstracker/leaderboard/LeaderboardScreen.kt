@@ -202,13 +202,12 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
       },
       confirmButton = {
         TextButton(
-          enabled = points != null && winType != null && (winType != WinType.SIKWU || discarderId != null),
+          enabled = winType != null && (winType != WinType.SIKWU || discarderId != null),
           onClick = {
             val winner = winnerId
             val type = winType
-            val faan = points
 
-            if (winner != null && type != null && faan != null) {
+            if (winner != null && type != null) {
               viewModel.recordWin(winner, type, discarderId, faan)
             }
 

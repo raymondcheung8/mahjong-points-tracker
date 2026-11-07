@@ -128,8 +128,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
   //popup to input faan into leaderboard
   if (showWinnerDialog) {
     val winner = players.find { it.id == winnerId }
-    var pointsText by remember { mutableStateOf("") }
-    val points = pointsText.toIntOrNull()
 
     AlertDialog(
       onDismissRequest = { showWinnerDialog = false },

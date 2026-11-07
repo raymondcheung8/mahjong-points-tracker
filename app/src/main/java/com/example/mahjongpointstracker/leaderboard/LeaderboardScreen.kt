@@ -21,7 +21,8 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
   //winnerId only has 1 slot for winner (change data type if more winners req.)
   var winnerId by remember { mutableStateOf<Int?>(null) }
 
-  var dealerId by remember { mutableStateOf<Int?>(null) }
+  var dealerId by remember { mutableIntStateOf(1) }
+  var round by remember { mutableIntStateOf(0) }
 
   //edit player name
   var editingPlayer by remember { mutableStateOf<Player?>(null) }
@@ -46,7 +47,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
         key = { _, player -> player.id }
       ) { index, player ->
         Column(modifier = Modifier.animateItem()) {
-          dealerId = 1
+          dealerId = (round % 4) + 1
           LeaderboardRow(
             rank = index + 1,
             player = player,
@@ -78,6 +79,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
         modifier = Modifier.weight(1f),
         onClick = {
           winnerId = null
+          round = 0
           viewModel.resetPoints()
         }
       ) {
@@ -212,6 +214,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
               viewModel.recordWin(winner, type, discarderId, dealerId, faan)
             }
 
+            if (winnerId != dealerId) round++
             winnerId = null
             showWinnerDialog = false
           }

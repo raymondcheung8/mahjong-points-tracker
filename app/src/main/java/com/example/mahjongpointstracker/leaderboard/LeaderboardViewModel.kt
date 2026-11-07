@@ -49,7 +49,7 @@ class LeaderboardViewModel(application: Application) : AndroidViewModel(applicat
     save(updated)
   }
 
-  fun owed(p: Player, winType: WinType, dealerWon: Boolean, dealerId: Int?, discarderId: Int?, unit: Int): Int {
+  fun owed(p: Player, winType: WinType, dealerWon: Boolean, dealerId: Int, discarderId: Int?, unit: Int): Int {
     val base = when (winType) {
       WinType.SIKWU -> if (p.id == discarderId) 2 else 1
       WinType.ZIMO -> 2
@@ -58,7 +58,7 @@ class LeaderboardViewModel(application: Application) : AndroidViewModel(applicat
     return base * unit * multiplier
   }
 
-  fun recordWin(winnerId: Int, winType: WinType, discarderId: Int?, dealerId: Int?, faan: Int) {
+  fun recordWin(winnerId: Int, winType: WinType, discarderId: Int?, dealerId: Int, faan: Int) {
     val unit = Utils.faanToPoints(faan)
     val total = _players.value
       .filter { it.id != winnerId }

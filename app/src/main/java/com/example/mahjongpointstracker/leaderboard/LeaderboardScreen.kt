@@ -62,16 +62,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
 
     HorizontalDivider()
     Spacer(Modifier.height(12.dp))
-    //Declare constants/values
-    var handText by remember { mutableStateOf("") }
-
-    //Textbox for writing out hands. Just copying Faan code to see how it works
-    OutlinedTextField(
-      value = handText,
-      onValueChange = { input -> handText = input.filter { it.isLetterOrDigit() } },
-      singleLine = true,
-      label = { Text("Hand") }
-    )
 
     Spacer(Modifier.height(12.dp))
 
@@ -192,6 +182,19 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
             singleLine = true,
             label = { Text("Faan (番)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+          )
+
+          Spacer(Modifier.height(8.dp))
+
+          //Declare constants/values
+          var handText by remember { mutableStateOf("") }
+
+          //Textbox for writing out hands. Just copying Faan code to see how it works
+          OutlinedTextField(
+            value = handText,
+            onValueChange = { input -> handText = input.filter { it.isLetterOrDigit() } },
+            singleLine = true,
+            label = { Text("Hand") }
           )
         }
       },

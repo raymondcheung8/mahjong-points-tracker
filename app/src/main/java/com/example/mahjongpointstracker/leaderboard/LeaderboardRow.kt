@@ -35,7 +35,7 @@ fun LeaderboardRow(
       fontWeight = FontWeight.Bold
     )
     Text(
-      text = if (isDealer) player.name + "(東)" else player.name,
+      text = if (isDealer) player.name + "(莊)" else player.name,
       modifier = Modifier
         .weight(1f)
         .clickable { onNameClick() },

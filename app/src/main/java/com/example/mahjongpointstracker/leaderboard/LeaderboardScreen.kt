@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mahjongpointstracker.model.Player
 import com.example.mahjongpointstracker.model.WinType
+import kotlin.math.roundToInt
 
 @Composable
 fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
@@ -25,6 +26,7 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
   //edit player name
   var editingPlayer by remember { mutableStateOf<Player?>(null) }
 
+  var faan by remember { mutableIntStateOf(3) }
   var showWinnerDialog by remember { mutableStateOf(false) }
   var winType by remember { mutableStateOf<WinType?>(null) }
   var discarderId by remember { mutableStateOf<Int?>(null) }
@@ -176,12 +178,12 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
           }
 
           Spacer(Modifier.height(8.dp))
-          OutlinedTextField(
-            value = pointsText,
-            onValueChange = { input -> pointsText = input.filter { it.isDigit() } },
-            singleLine = true,
-            label = { Text("Faan (番)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+          Text("Faan (番): $faan", style = MaterialTheme.typography.labelLarge)
+          Slider(
+            value = faan.toFloat(),
+            onValueChange = { faan = it.roundToInt() },
+            valueRange = 0f..10f,
+            steps = 9
           )
 
           Spacer(Modifier.height(8.dp))

@@ -9,7 +9,7 @@ data class Player(
   fun getPlayerWithPointsReset() = Player(id, name, DEFAULT_POINTS)
 
   companion object {
-    const val DEFAULT_POINTS = 100
+    const val DEFAULT_POINTS = 150
     fun default(id: Int) = Player(id, "Player$id", DEFAULT_POINTS)
     fun getDefaultPlayers(): List<Player> =
       listOf(

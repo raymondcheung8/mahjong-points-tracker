@@ -1,4 +1,4 @@
-package com.example.mahjongpointstracker.uix
+package com.example.mahjongpointstracker.leaderboard
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,28 +9,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mahjongpointstracker.model.Player
-import com.example.mahjongpointstracker.model.Utils
 import com.example.mahjongpointstracker.model.WinType
-import java.io.File
 
 @Composable
-fun LeaderboardScreen() {
-  // TODO move to form screen instead of leaderboard screen
-  val historyFile = File(LocalContext.current.filesDir, "example.csv")
-
-  val retryLimit = 5
-  if (!Utils.createNewFileWithRetries(historyFile, retryLimit)) {
-    throw Exception("Cannot create new file: ${historyFile.name} after $retryLimit attempts")
-  }
-  // TODO read the existing scores from csv
-  // TODO create a new function in Utils to read csv
-//  val bufferedReader: BufferedReader = history.bufferedReader()
-//  val inputString = bufferedReader.use { it.readText() }
-//  println(inputString)
+fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
+  val players by viewModel.players.collectAsState()
 
   //winnerId only has 1 slot for winner (change data type if more winners req.)
   var winnerId by remember { mutableStateOf<Int?>(null) }
@@ -41,17 +28,6 @@ fun LeaderboardScreen() {
   var showWinnerDialog by remember { mutableStateOf(false) }
   var winType by remember { mutableStateOf<WinType?>(null) }
   var discarderId by remember { mutableStateOf<Int?>(null) }
-
-  var players by remember {
-    mutableStateOf(
-      listOf(
-        Player(1, "Player1", 300),
-        Player(2, "Player2", 300),
-        Player(3, "Player3", 300),
-        Player(4, "Player4", 300)
-      )
-    )
-  }
 
   Column(
     modifier = Modifier
@@ -100,7 +76,6 @@ fun LeaderboardScreen() {
     Spacer(Modifier.height(12.dp))
 
     // Button panel
-    //TODO add zimo and sikwu checkboxes maybe in winner popup
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -109,8 +84,7 @@ fun LeaderboardScreen() {
         modifier = Modifier.weight(1f),
         onClick = {
           winnerId = null
-          //set all player points to 300
-          players = players.map { it.copy(points = 300) }
+          viewModel.resetPoints()
         }
       ) {
         Text("Reset")
@@ -119,8 +93,7 @@ fun LeaderboardScreen() {
         modifier = Modifier.weight(1f),
         enabled = winnerId != null,
         onClick = {
-          // TODO update csv file
-            showWinnerDialog = true
+          showWinnerDialog = true
         }
       ) {
         Text("Winner")
@@ -147,9 +120,7 @@ fun LeaderboardScreen() {
         TextButton(
           enabled = newName.isNotBlank(),
           onClick = {
-            players = players.map {
-              if (it.id == player.id) it.copy(name = newName.trim()) else it
-            }
+            viewModel.renamePlayer(player.id, newName)
             editingPlayer = null
           }
         ) {
@@ -228,27 +199,14 @@ fun LeaderboardScreen() {
         TextButton(
           enabled = points != null && winType != null && (winType != WinType.SIKWU || discarderId != null),
           onClick = {
-            players = players.map {
-              //minus points from non-winners, extra penalty if dealt in
-              //all penalty if self draw
-              //convert faan to points before adding to final score
-              when (winType) {
-                WinType.SIKWU -> {
-                  when (it.id) {
-                    discarderId -> it.copy(points = it.points - 2 * Utils.faanToPoints(points!!))
-                    winnerId -> it.copy(points = it.points + 4 * Utils.faanToPoints(points!!))
-                    else -> it.copy(points = it.points - Utils.faanToPoints(points!!))
-                  }
-                }
-                WinType.ZIMO -> {
-                  when (it.id) {
-                    winnerId -> it.copy(points = it.points + 6 * Utils.faanToPoints(points!!))
-                    else -> it.copy(points = it.points - 2 * Utils.faanToPoints(points!!))
-                  }
-                }
-                else -> it
-              }
+            val winner = winnerId
+            val type = winType
+            val faan = points
+
+            if (winner != null && type != null && faan != null) {
+              viewModel.recordWin(winner, type, discarderId, faan)
             }
+
             winnerId = null
             showWinnerDialog = false
           }

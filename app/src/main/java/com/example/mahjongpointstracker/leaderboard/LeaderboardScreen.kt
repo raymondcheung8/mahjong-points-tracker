@@ -31,6 +31,9 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
   //edit player name
   var editingPlayer by remember { mutableStateOf<Player?>(null) }
 
+  //hand string
+  var handText by remember { mutableStateOf("") }
+
   var faan by remember { mutableIntStateOf(3) }
   var showWinnerDialog by remember { mutableStateOf(false) }
   var winType by remember { mutableStateOf<WinType?>(null) }
@@ -107,10 +110,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
     }
   }
 
-
-
-
-
   //popup to change player name
   editingPlayer?.let { player ->
     var newName by remember(player.id) { mutableStateOf(player.name) }
@@ -147,7 +146,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
 
   //popup to input faan into leaderboard
   if (showWinnerDialog) {
-    val winner = players.find { it.id == winnerId }
 
     AlertDialog(
       onDismissRequest = { showWinnerDialog = false },
@@ -251,9 +249,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
           }
 
           // TODO: Add this back once we connect this up to the CSV reader/writer
-
-          //Declare constants/values
-          var handText by remember { mutableStateOf("") }
 
           //Textbox for writing out hands. Just copying Faan code to see how it works
           OutlinedTextField(

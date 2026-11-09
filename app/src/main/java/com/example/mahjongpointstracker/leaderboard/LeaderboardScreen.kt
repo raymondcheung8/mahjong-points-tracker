@@ -1,10 +1,12 @@
 package com.example.mahjongpointstracker.leaderboard
 
-import android.R
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -33,6 +35,9 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
   var showWinnerDialog by remember { mutableStateOf(false) }
   var winType by remember { mutableStateOf<WinType?>(null) }
   var discarderId by remember { mutableStateOf<Int?>(null) }
+
+//debuging tileRenderingManager
+  InitMyHand()
 
   Column(
     modifier = Modifier
@@ -100,7 +105,28 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
         Text("Round End")
       }
     }
+
+    HorizontalDivider()
+    Spacer(Modifier.height(12.dp))
+
+
+    Row (modifier = Modifier.
+      width(2000.dp).
+    height(128.dp).
+    horizontalScroll(rememberScrollState(0),true),
+      horizontalArrangement = Arrangement.Start ) {
+
+      //debug tileRender
+      HandDraw(handList)
+      Spacer(modifier = Modifier.width(10.dp))
+
+    }
+
   }
+
+
+
+
 
   //popup to change player name
   editingPlayer?.let { player ->

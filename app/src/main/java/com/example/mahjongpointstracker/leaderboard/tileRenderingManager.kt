@@ -96,14 +96,9 @@ fun HandDraw(playerHandList: MutableList<MutableList<Int>>) {
   // I need to draw Images from the spritesheet that corespond to the 2Dlist representing the
   // player hand. They need to appear in a row on the screen.
 
-  // Debug Print
-  for (yIndex in handList.indices) {
-    for (c in handList[yIndex].indices) {
-      println("[$yIndex][$c] = ${handList[yIndex][c]}")
-    }
-  }
 
   val sheet = ImageBitmap.imageResource(R.drawable.tilemapv1)
+
   // Return if parameters(?) are null in 2D list. NOTE still using hardcoded 2D list
   val hand = playerHandList.getOrNull(0) ?: return
 
@@ -111,23 +106,19 @@ fun HandDraw(playerHandList: MutableList<MutableList<Int>>) {
     modifier = Modifier
       .fillMaxSize()
   ) {
-
-
     // Loops 14 times to draw each tile.
-    for (i in 0 until 7) {
+    for (i in 0 until 14) {
       println("looptest$i")
       drawImage(
         image = sheet,
         // srcOffset is the top left coord of the tile on the tileMap
-        srcOffset = IntOffset(233*handList[0][i],350*handList[1][i]),
-        srcSize = IntSize(233,350),
+        srcOffset = IntOffset(240*handList[0][i],350*handList[1][i]),
+        srcSize = IntSize(240,350),
         // dstOffset is the top left postion to draw this image (all 14 tiles) in Row
-        dstOffset = IntOffset((233 * i), 0),
-        dstSize = IntSize(233,350),
+        dstOffset = IntOffset((50 * i), 0),
+        dstSize = IntSize(50,73),
         filterQuality = FilterQuality.None
       )
     }
-
   }
-
 }

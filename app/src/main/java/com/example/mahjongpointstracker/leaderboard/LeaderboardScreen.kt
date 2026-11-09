@@ -105,23 +105,6 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
         Text("Round End")
       }
     }
-
-    HorizontalDivider()
-    Spacer(Modifier.height(12.dp))
-
-
-    Row (modifier = Modifier.
-      width(2000.dp).
-    height(128.dp).
-    horizontalScroll(rememberScrollState(0),true),
-      horizontalArrangement = Arrangement.Start ) {
-
-      //debug tileRender
-      HandDraw(handList)
-      Spacer(modifier = Modifier.width(10.dp))
-
-    }
-
   }
 
 
@@ -258,19 +241,27 @@ fun LeaderboardScreen(viewModel: LeaderboardViewModel = viewModel()) {
             steps = 9
           )
 
+          Spacer(Modifier.height(12.dp))
+          Row (modifier = Modifier.
+          fillMaxWidth().
+          height(50.dp)) {
+
+            HandDraw(handList)
+
+          }
+
           // TODO: Add this back once we connect this up to the CSV reader/writer
-//          Spacer(Modifier.height(8.dp))
-//
-//          //Declare constants/values
-//          var handText by remember { mutableStateOf("") }
-//
-//          //Textbox for writing out hands. Just copying Faan code to see how it works
-//          OutlinedTextField(
-//            value = handText,
-//            onValueChange = { input -> handText = input.filter { it.isLetterOrDigit() } },
-//            singleLine = true,
-//            label = { Text("Hand") }
-//          )
+
+          //Declare constants/values
+          var handText by remember { mutableStateOf("") }
+
+          //Textbox for writing out hands. Just copying Faan code to see how it works
+          OutlinedTextField(
+            value = handText,
+            onValueChange = { input -> handText = input.filter { it.isLetterOrDigit() } },
+            singleLine = true,
+            label = { Text("Hand") }
+          )
         }
       },
       confirmButton = {
